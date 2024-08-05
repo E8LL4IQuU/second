@@ -1,0 +1,55 @@
+CREATE TABLE Containers (
+    ID UNIQUEIDENTIFIER PRIMARY KEY,
+    Number INT,
+    Type NVARCHAR(100),
+    Length FLOAT,
+    Width FLOAT,
+    Height FLOAT,
+    Weight FLOAT,
+    IsEmpty BIT,
+    ArrivalDate DATETIME
+);
+
+CREATE TABLE Operations (
+    ID UNIQUEIDENTIFIER PRIMARY KEY,
+    ContainerID UNIQUEIDENTIFIER,
+    StartDate DATETIME,
+    EndDate DATETIME,
+    OperationType NVARCHAR(100),
+    OperatorName NVARCHAR(100),
+    InspectionPlace NVARCHAR(100),
+    FOREIGN KEY (ContainerID) REFERENCES Containers(ID)
+);
+
+SELECT
+    '{' +
+    '"ID": "' + CAST(ID AS NVARCHAR(36)) + '", ' +
+    '"Number": ' + CAST(Number AS NVARCHAR(20)) + ', ' +
+    '"Type": "' + Type + '", ' +
+    '"Length": ' + CAST(Length AS NVARCHAR(20)) + ', ' +
+    '"Width": ' + CAST(Width AS NVARCHAR(20)) + ', ' +
+    '"Height": ' + CAST(Height AS NVARCHAR(20)) + ', ' +
+    '"Weight": ' + CAST(Weight AS NVARCHAR(20)) + ', ' +
+    '"IsEmpty": ' + CASE WHEN IsEmpty = 1 THEN 'true' ELSE 'false' END + ', ' +
+    '"ArrivalDate": "' + CONVERT(NVARCHAR, ArrivalDate, 126) + '"' +
+    '}' AS JSON
+FROM
+    Containers;
+
+DECLARE @ContainerID UNIQUEIDENTIFIER;
+SET @ContainerID = 'your-container-id-here';  -- Replace with the actual container ID
+
+SELECT
+    '{' +
+    '"ID": "' + CAST(ID AS NVARCHAR(36)) + '", ' +
+    '"ContainerID": "' + CAST(ContainerID AS NVARCHAR(36)) + '", ' +
+    '"StartDate": "' + CONVERT(NVARCHAR, StartDate, 126) + '", ' +
+    '"EndDate": "' + CONVERT(NVARCHAR, EndDate, 126) + '", ' +
+    '"OperationType": "' + OperationType + '", ' +
+    '"OperatorName": "' + OperatorName + '", ' +
+    '"InspectionPlace": "' + InspectionPlace + '"' +
+    '}' AS JSON
+FROM
+    Operations
+WHERE
+    ContainerID = @ContainerID;

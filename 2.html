@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dependent Dropdowns Form</title>
+    <script>
+        const data = {
+            cities: {
+                "City1": ["Shop1", "Shop2"],
+                "City2": ["Shop3", "Shop4"]
+            },
+            shops: {
+                "Shop1": ["Employee1", "Employee2"],
+                "Shop2": ["Employee3", "Employee4"],
+                "Shop3": ["Employee5", "Employee6"],
+                "Shop4": ["Employee7", "Employee8"]
+            },
+            brigades: ["Brigade1", "Brigade2"],
+            shifts: ["Shift1", "Shift2"]
+        };
+
+        function updateShops() {
+            const citySelect = document.getElementById('city');
+            const shopSelect = document.getElementById('shop');
+            const selectedCity = citySelect.value;
+            const shops = data.cities[selectedCity] || [];
+
+            shopSelect.innerHTML = '';
+            shops.forEach(shop => {
+                const option = document.createElement('option');
+                option.value = shop;
+                option.textContent = shop;
+                shopSelect.appendChild(option);
+            });
+
+            updateEmployees();
+        }
+
+        function updateEmployees() {
+            const shopSelect = document.getElementById('shop');
+            const employeeSelect = document.getElementById('employee');
+            const selectedShop = shopSelect.value;
+            const employees = data.shops[selectedShop] || [];
+
+            employeeSelect.innerHTML = '';
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee;
+                option.textContent = employee;
+                employeeSelect.appendChild(option);
+            });
+        }
+
+        function saveToCookie() {
+            const selectedValues = {
+                city: document.getElementById('city').value,
+                shop: document.getElementById('shop').value,
+                employee: document.getElementById('employee').value,
+                brigade: document.getElementById('brigade').value,
+                shift: document.getElementById('shift').value
+            };
+
+            document.cookie = `formData=${JSON.stringify(selectedValues)};path=/;`;
+            alert('Data saved to cookie');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const brigadeSelect = document.getElementById('brigade');
+            const shiftSelect = document.getElementById('shift');
+
+            data.brigades.forEach(brigade => {
+                const option = document.createElement('option');
+                option.value = brigade;
+                option.textContent = brigade;
+                brigadeSelect.appendChild(option);
+            });
+
+            data.shifts.forEach(shift => {
+                const option = document.createElement('option');
+                option.value = shift;
+                option.textContent = shift;
+                shiftSelect.appendChild(option);
+            });
+
+            updateShops();
+        });
+    </script>
+</head>
+<body>
+    <form>
+        <label for="city">Город:</label>
+        <select id="city" onchange="updateShops()">
+            <option value="City1">City1</option>
+            <option value="City2">City2</option>
+        </select>
+        <br>
+
+        <label for="shop">Цех:</label>
+        <select id="shop" onchange="updateEmployees()"></select>
+        <br>
+
+        <label for="employee">Сотрудник:</label>
+        <select id="employee"></select>
+        <br>
+
+        <label for="brigade">Бригада:</label>
+        <select id="brigade"></select>
+        <br>
+
+        <label for="shift">Смена:</label>
+        <select id="shift"></select>
+        <br>
+
+        <button type="button" onclick="saveToCookie()">Save</button>
+    </form>
+</body>
+</html>
